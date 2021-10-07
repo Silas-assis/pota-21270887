@@ -30,7 +30,7 @@ public class BuscaBinaria {
 			Cliente cliente = list.get(meio);
 
 			count++;
-			if (cliente.getNome().equals(nome)) {
+			if (cliente.getNome().equalsIgnoreCase(nome)) {
 				return cliente;
 			}
 

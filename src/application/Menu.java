@@ -1,8 +1,9 @@
 package application;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -25,7 +26,7 @@ public class Menu {
 
 		// Arquivo arquivoCsv = new Arquivo(path);
 
-		try (BufferedReader leitor = new BufferedReader(new FileReader(path))) {
+		try (BufferedReader leitor = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"))) {
 
 			String linha = leitor.readLine();
 
@@ -97,10 +98,15 @@ public class Menu {
 		} while (!finalizarPrograma.equals("exit"));
 
 		fecharScanner(inputTexto, inputNumero);
+
+		for (Cliente cliente : list) {
+			System.out.println(cliente);
+		}
 	}
 
 	/*
-	 * Método que verifica se o input do usúario está correto para finalizar o programa.
+	 * Método que verifica se o input do usúario está correto para finalizar o
+	 * programa.
 	 */
 	private static String encerrarPrograma(String finalizarPrograma, Scanner inputTexto) {
 		System.out.print("Digite exit para encerrar o programa: ");
