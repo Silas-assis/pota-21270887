@@ -1,7 +1,9 @@
 package entities;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class BuscaBinaria {
 	private List<Cliente> list = new ArrayList<Cliente>();
@@ -9,16 +11,20 @@ public class BuscaBinaria {
 
 	public BuscaBinaria() {
 	}
+
 	public BuscaBinaria(List<Cliente> list) {
 		this.list = list;
 	}
-	
+
 	public int getCount() {
 		return count;
 	}
 
 	public Cliente pesquisaBinaria(String nome) {
 		int inicio, fim, meio;
+
+		Collator collator = Collator.getInstance(new Locale("pt", "BR"));
+		collator.setStrength(Collator.PRIMARY);
 
 		inicio = 0;
 		fim = list.size() - 1;
@@ -30,12 +36,12 @@ public class BuscaBinaria {
 			Cliente cliente = list.get(meio);
 
 			count++;
-			if (cliente.getNome().equalsIgnoreCase(nome)) {
+			if (collator.compare(cliente.getNome(), nome) == 0) {
 				return cliente;
 			}
 
 			count++;
-			if (cliente.getNome().compareTo(nome) > 0) {
+			if (collator.compare(cliente.getNome(), nome) > 0) {
 				fim = meio - 1;
 			} else {
 				inicio = meio + 1;
