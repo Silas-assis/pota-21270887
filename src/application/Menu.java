@@ -1,14 +1,13 @@
 package application;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
+import entities.Arquivo;
 import entities.BuscaBinaria;
 import entities.Cliente;
 
@@ -21,44 +20,11 @@ public class Menu {
 		// Caminho do arquivo csv da atividade.
 		String path = "C:\\Users\\LEDcl\\eclipse-workspace\\pota-21270887\\arquivoDados.csv";
 
-		// Lista de Clientes para armazenar informações de cada cliente.
 		List<Cliente> list = new ArrayList<Cliente>();
 
-		// Arquivo arquivoCsv = new Arquivo(path);
+		Arquivo arquivoCsv = new Arquivo(path);
 
-		try (BufferedReader leitor = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"))) {
-
-			String linha = leitor.readLine();
-
-			/*
-			 * Enquanto o while for diferente de null, o algoritmo vai ler a próxima linha.
-			 * Utilizando o método Split, que recorta com base na virgula e guardando cada
-			 * informação em um vetor auxiliar. Após percorrer a linha inteira, irá
-			 * instanciar o cliente e em seguida adicionar ao ArrayList. No final, o
-			 * algoritmo lê a próxima linha e repete o processo até a próxima linha ser
-			 * vazia.
-			 */
-
-			while (linha != null) {
-
-				String[] vetor = linha.split(",");
-				String nome = vetor[0];
-				String sexo = vetor[1];
-				String endereco = vetor[2];
-				String cidade = vetor[3];
-				String email = vetor[4];
-				String telefone = vetor[5];
-				String idade = vetor[6];
-
-				Cliente cliente = new Cliente(nome, sexo, endereco, cidade, email, telefone, idade);
-				list.add(cliente);
-
-				linha = leitor.readLine(); // Ler a próxima linha
-			}
-
-		} catch (IOException e) {
-			System.out.println("Error: " + e.getMessage());
-		}
+		list = arquivoCsv.lerArquivo();
 
 		String finalizarPrograma = "";
 
@@ -67,8 +33,9 @@ public class Menu {
 
 		do {
 
-			System.out.println("1) Pesquisar Cliente.");
-			System.out.println("2) Finalizar Programa.");
+			System.out.println("1) Pesquisar Um Cliente.");
+			System.out.println("2) Pesquisar Todos os Clientes.");
+			System.out.println("3) Finalizar Programa.");
 			System.out.print("Escolha uma opção: ");
 
 			int escolhaMenu = 0;
@@ -85,6 +52,11 @@ public class Menu {
 				pesquisarCliente(inputTexto, list);
 				break;
 			case 2:
+				pularLinha();
+				informarTodosClientes(list);
+				pularLinha();
+				break;
+			case 3:
 				do {
 					finalizarPrograma = encerrarPrograma(finalizarPrograma, inputTexto);
 					pularLinha();
@@ -99,6 +71,9 @@ public class Menu {
 
 		fecharScanner(inputTexto, inputNumero);
 
+	}
+
+	private static void informarTodosClientes(List<Cliente> list) {
 		for (Cliente cliente : list) {
 			System.out.println(cliente);
 		}
@@ -141,6 +116,8 @@ public class Menu {
 		System.out.print("Informe o nome do cliente desejado: ");
 		String nome = inputTexto.nextLine();
 
+		nome = semAcento(nome);
+
 		Cliente cliente = pesquisaCliente.pesquisaBinaria(nome);
 
 		if (cliente == null) {
@@ -167,5 +144,14 @@ public class Menu {
 	private static void fecharScanner(Scanner inputTexto, Scanner inputNumero) {
 		inputTexto.close();
 		inputNumero.close();
+	}
+
+	/*
+	 * Método para remover todos os acentos.
+	 */
+	public static String semAcento(String str) {
+		String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
+		Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+		return pattern.matcher(nfdNormalizedString).replaceAll("");
 	}
 }
